@@ -1,24 +1,25 @@
 # Sleep Detection using Eye Aspect Ratio (EAR)
 
-This project implements a real-time sleep detection system using OpenCV, Dlib, and SciPy. The system detects facial landmarks and calculates the Eye Aspect Ratio (EAR) to determine whether a person's eyes are closed for an extended period, indicating possible drowsiness.
+This project implements a real-time sleep detection system using OpenCV, MediaPipe, and SciPy. The system detects facial landmarks via MediaPipe and calculates the Eye Aspect Ratio (EAR) to determine whether a person's eyes are closed for an extended period, indicating possible drowsiness.
 
 ## Features
-- Real-time face and eye detection using Dlib's facial landmark predictor.
+- Real-time face and eye detection using MediaPipe's Face Mesh.
 - Calculation of the Eye Aspect Ratio (EAR) to detect eye closure.
 - Visual indication when eyes are closed for a predefined number of frames.
-- Uses OpenCV for video capture and display.
+- Uses OpenCV for video capture and GUI display.
 
 ## Requirements
 Ensure you have the following dependencies installed:
 
 ```bash
-pip install opencv-python dlib numpy scipy imutils
+pip install opencv-python mediapipe numpy scipy
+
 ```
 
 ## Setup
 1. Clone the repository:
    ```bash
-   git clone https://github.com/RecursionReaper/drowsy_detector.git
+   git clone https://github.com/coolbrickv314/drowsy_driver_coolbrick.git
    cd <repository_folder>
    ```
 
@@ -49,12 +50,13 @@ python sleep.py
 ```
 
 ## How It Works
-- The script captures video from your webcam.
-- It detects the face and eye landmarks using Dlib's shape predictor.
-- The EAR is calculated for both eyes and averaged.
-- If the EAR value falls below a threshold (default: 0.2) for a consecutive number of frames (default: 5), a warning is displayed.
-- The program exits when you press the `q` key.
+- Captures video from your webcam.
+- Detects 468 face landmarks using MediaPipe Face Mesh.
+- Calculates the EAR for both eyes using selected landmark points.
+- Displays "EYES CLOSED!" if the EAR remains below a threshold (default: 0.2) for a set number of consecutive frames (default: 5).
+- Displays real-time EAR and facial eye contours.
 
+  
 ## Parameters
 You can fine-tune the detection sensitivity by modifying these parameters in `sleep.py`:
 
@@ -64,38 +66,41 @@ CLOSED_FRAMES_THRESHOLD = 5  # Number of consecutive frames before triggering an
 ```
 
 ## Expected Output
-- A real-time video feed with face and eye landmarks drawn.
-- A text overlay displaying the EAR value.
-- A warning message "EYES CLOSED!" when prolonged eye closure is detected.
+- A real-time webcam feed showing face mesh with eye outline, EAR value and "EYES CLOSED!" alert if drowsiness is deteced. 
+  
 
 ## Troubleshooting
 ### Common Issues & Fixes
 
-1. **Dlib Module Not Found**
-   - Ensure Dlib is installed correctly:
+1. **No webcam feed**
+   - Chnage camera address. 
      ```bash
-     pip install dlib
+     cv2.VideoCapture(1)  # or cv2.VideoCapture(2)
      ```
-   - Try reinstalling with:
+   - Or test if the webcam is accessible with:
      ```bash
-     pip uninstall dlib && pip install dlib
+     v4l2-ctl --list-devices
      ```
 
-2. **Shape Predictor File Not Found**
-   - Ensure `shape_predictor_68_face_landmarks.dat` is in the correct directory.
-   - Use the absolute path if necessary:
+2. **MediaPipe errors**
+   - Reinstall MediaPipe
      ```python
-     predictor = dlib.shape_predictor("/absolute/path/to/shape_predictor_68_face_landmarks.dat")
+     pip install mediapipe -y
+     pip install mediapipe
      ```
 
-3. **Camera Not Working**
-   - Ensure your webcam is properly connected.
+3. **Blank window (no face detection)**
+   - Ensure lighting and camera permissions
+     ```bash
+     sudo usermod -aG video $USER # add permission
+     groups $USER  # make sure you're in the 'video' group
+     ```
    - Try changing the video capture index in `cap = cv2.VideoCapture(0)`. Replace `0` with `1` or `2` if necessary.
 
 ## License
 This project is open-source and available under the [MIT License](LICENSE).
 
 ## Acknowledgments
-- Dlib for facial landmark detection.
-- OpenCV for image processing.
-- SciPy for spatial distance calculations.
+- MediaPipe for advanced facial landmark detection.
+- OpenCV for video processing and display.
+- SciPy for geometric distance calculations.
